@@ -3,18 +3,21 @@
 export const runtime = 'edge';
 
 import { useState } from "react";
-import { useTranslations } from "next-intl";
 import { DesignCard } from "@/features/designs/components/DesignCard";
 import { MOCK_DESIGNS } from "@/lib/mock-data";
 import { Plus, Filter } from "lucide-react";
-import { Link } from "@/i18n/routing";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 type FilterType = "all" | "active" | "draft";
 
+const FILTER_LABELS: Record<FilterType, string> = {
+  all: "ທັງໝົດ",
+  active: "ກຳລັງໃຊ້ງານ",
+  draft: "ສະບັບຮ່າງ",
+};
+
 export default function DesignsPage() {
-  const t = useTranslations("Designs");
-  const tCommon = useTranslations("Common");
   const [filter, setFilter] = useState<FilterType>("all");
 
   const filteredDesigns = MOCK_DESIGNS.filter((design) => {
@@ -27,15 +30,15 @@ export default function DesignsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold text-gray-900">{tCommon('myDesigns')}</h2>
-          <p className="text-sm text-gray-500 mt-0.5">{t('managePortfolio')}</p>
+          <h2 className="text-xl font-bold text-gray-900">ຜົນງານຂອງຂ້ອຍ</h2>
+          <p className="text-sm text-gray-500 mt-0.5">ຈັດການຜົນງານທັງໝົດຂອງທ່ານ</p>
         </div>
         <Link
           href="/designs/upload"
           className="inline-flex items-center justify-center gap-2 bg-black text-white font-bold text-sm h-10 px-5 rounded-xl hover:bg-gray-900 transition-colors"
         >
           <Plus size={18} />
-          <span>{tCommon('newDesign')}</span>
+          <span>ອອກແບບໃໝ່</span>
         </Link>
       </div>
 
@@ -43,7 +46,7 @@ export default function DesignsPage() {
       <div className="flex items-center gap-2">
         <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-100 rounded-lg text-sm font-medium text-gray-500 mr-2">
           <Filter size={14} />
-          <span>{tCommon('filter')}</span>
+          <span>ຕົວກັ່ນຕອງ:</span>
         </div>
         {(["all", "active", "draft"] as const).map((f) => (
           <button
@@ -56,7 +59,7 @@ export default function DesignsPage() {
                 : "text-gray-500 hover:bg-gray-100"
             )}
           >
-            {t(f)}
+            {FILTER_LABELS[f]}
           </button>
         ))}
       </div>
@@ -73,17 +76,17 @@ export default function DesignsPage() {
           <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
             <Plus size={24} className="text-gray-400" />
           </div>
-          <h3 className="text-lg font-bold text-gray-900 mb-1">{t('noDesigns')}</h3>
+          <h3 className="text-lg font-bold text-gray-900 mb-1">ບໍ່ພົບຜົນງານ</h3>
           <p className="text-gray-500 mb-6 max-w-sm">
             {filter !== "all"
-              ? t('noDraftActiveDesigns', { filter: t(filter) })
-              : t('startBuilding')}
+              ? `ທ່ານຍັງບໍ່ມີຜົນງານແບບ ${FILTER_LABELS[filter]}`
+              : "ເລີ່ມຕົ້ນສ້າງຜົນງານຂອງທ່ານໂດຍການອັບໂຫລດລາຍທຳອິດ"}
           </p>
           <Link
             href="/designs/upload"
             className="inline-flex items-center justify-center bg-[#262626] text-white font-bold text-sm h-10 px-6 rounded-xl hover:bg-black transition-colors"
           >
-            {t('uploadNow')}
+            ອັບໂຫລດຕອນນີ້
           </Link>
         </div>
       )}

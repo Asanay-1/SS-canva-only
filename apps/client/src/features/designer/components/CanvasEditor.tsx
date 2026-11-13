@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from "react";
 import { useDesigner } from "../hooks/useDesigner";
-import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
 import { Trash2, Maximize, MousePointer2, FlipHorizontal, Save, Loader2, RotateCcw, Send, AlignCenter, RotateCw, RefreshCw, ChevronUp, ChevronDown } from "lucide-react";
 
@@ -14,7 +13,6 @@ interface CanvasEditorProps {
 }
 
 export function CanvasEditor({ onInit, onPublish, isSubmitting, hasArtwork }: CanvasEditorProps) {
-  const t = useTranslations("Designer");
   const designer = useDesigner();
   const canvasElementRef = useRef<HTMLCanvasElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -228,7 +226,7 @@ export function CanvasEditor({ onInit, onPublish, isSubmitting, hasArtwork }: Ca
             type="button"
             onClick={designer.deleteSelected}
             className="p-2 hover:bg-white/10 rounded-xl transition-colors text-red-400"
-            title={t('deleteSelected')}
+            title="ລຶບທີ່ເລືອກ"
           >
             <Trash2 size={18} />
           </button>
@@ -239,7 +237,7 @@ export function CanvasEditor({ onInit, onPublish, isSubmitting, hasArtwork }: Ca
             type="button"
             onClick={designer.centerObjectH}
             className="p-2 hover:bg-white/10 rounded-xl transition-colors text-gray-300"
-            title={t('alignCenter')}
+            title="ຈັດວາງເຄິ່ງກາງ"
           >
             <AlignCenter size={18} />
           </button>
@@ -248,7 +246,7 @@ export function CanvasEditor({ onInit, onPublish, isSubmitting, hasArtwork }: Ca
             type="button"
             onClick={designer.flipObject}
             className="p-2 hover:bg-white/10 rounded-xl transition-colors text-gray-300"
-            title={t('flipHorizontal')}
+            title="ພິກແນວນອນ"
           >
             <FlipHorizontal size={18} />
           </button>
@@ -259,7 +257,7 @@ export function CanvasEditor({ onInit, onPublish, isSubmitting, hasArtwork }: Ca
             type="button"
             onClick={designer.rotateObject}
             className="p-2 hover:bg-white/10 rounded-xl transition-colors text-gray-300"
-            title={t('rotate45')}
+            title="ໝູນ 45°"
           >
             <RotateCw size={18} />
           </button>
@@ -270,7 +268,7 @@ export function CanvasEditor({ onInit, onPublish, isSubmitting, hasArtwork }: Ca
             type="button"
             onClick={designer.bringForward}
             className="p-2 hover:bg-white/10 rounded-xl transition-colors text-gray-300"
-            title={t('layerUp')}
+            title="ຍ້າຍຂຶ້ນຊັ້ນເທິງ"
           >
             <ChevronUp size={18} />
           </button>
@@ -279,7 +277,7 @@ export function CanvasEditor({ onInit, onPublish, isSubmitting, hasArtwork }: Ca
             type="button"
             onClick={designer.sendBackwards}
             className="p-2 hover:bg-white/10 rounded-xl transition-colors text-gray-300"
-            title={t('layerDown')}
+            title="ຍ້າຍລົງຊັ້ນລຸ່ມ"
           >
             <ChevronDown size={18} />
           </button>

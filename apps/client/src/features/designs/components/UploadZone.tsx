@@ -2,7 +2,6 @@
 
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { useTranslations } from "next-intl";
 import { motion, AnimatePresence } from "framer-motion";
 import { Upload, Image as ImageIcon, X } from "lucide-react";
 import Image from "next/image";
@@ -15,7 +14,6 @@ interface UploadZoneProps {
 }
 
 export function UploadZone({ onFileSelect, previewUrl, onClear }: UploadZoneProps) {
-  const t = useTranslations("Designs");
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
       const file = acceptedFiles[0];
@@ -77,12 +75,12 @@ export function UploadZone({ onFileSelect, previewUrl, onClear }: UploadZoneProp
         </div>
         <div>
           <p className="font-bold text-gray-700 text-sm">
-            {isDragActive ? t('dropHereActive') : t('dropHere')}
+            {isDragActive ? "ວາງໄຟລ໌ລົງທີ່ນີ້!" : "ວາງໄຟລ໌ອອກແບບຂອງທ່ານທີ່ນີ້"}
           </p>
-          <p className="text-xs text-gray-400 mt-1">{t('uploadLimit')}</p>
+          <p className="text-xs text-gray-400 mt-1">PNG, JPG, WebP ສູງສຸດ 10MB</p>
         </div>
         <span className="text-xs font-bold text-black border border-black px-3 py-1.5 rounded-lg hover:bg-black hover:text-white transition-colors">
-          {t('browseFiles')}
+          ເລືອກໄຟລ໌
         </span>
       </motion.div>
     </div>

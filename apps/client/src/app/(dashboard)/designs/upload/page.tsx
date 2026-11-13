@@ -2,10 +2,10 @@
 
 export const runtime = 'edge';
 
-import { useState, useCallback, useRef } from "react";
-import { useTranslations } from "next-intl";
+import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Link, useRouter } from "@/i18n/routing";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowLeft, Save, Loader2, Upload, Trash2, Plus, MousePointer2, X, Sticker } from "lucide-react";
 
 import { CanvasEditor } from "@/features/designer/components/CanvasEditor";
@@ -13,8 +13,6 @@ import { useDesigner } from "@/features/designer/hooks/useDesigner";
 import { StickerPicker } from "@/features/designer/components/StickerPicker";
 
 export default function UploadPage() {
-  const t = useTranslations("Designer");
-  const tCommon = useTranslations("Common");
   const router = useRouter();
   const [designer, setDesigner] = useState<ReturnType<typeof useDesigner> | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -64,7 +62,7 @@ export default function UploadPage() {
         clearInterval(interval);
         setIsUploading(false);
         setUploadProgress(0);
-        alert(t('uploadFailed'));
+        alert("ອັບໂຫລດຮູບພາບບໍ່ສຳເລັດ ກະລຸນາລອງໃໝ່");
       } finally {
         e.target.value = '';
       }
@@ -90,7 +88,7 @@ export default function UploadPage() {
           disabled={isSubmitting}
           whileTap={{ scale: 0.95 }}
           className="w-10 h-10 bg-black text-white rounded-xl flex items-center justify-center hover:bg-gray-800 transition-all disabled:opacity-30 shadow-lg shadow-black/10"
-          title={t('publishDesign')}
+          title="ເຜີຍແຜ່ຜົນງານ"
         >
           {isSubmitting ? (
             <Loader2 size={18} className="animate-spin text-white/50" />
@@ -106,7 +104,7 @@ export default function UploadPage() {
         <div className="w-full bg-white rounded-[32px] p-1 md:p-6 border-2 border-gray-200 flex flex-col relative min-w-0 min-h-[400px] lg:min-h-[750px] lg:max-h-[720px]">
           {/* Floating Action Buttons - Top Right: Add Image */}
           <div className="absolute top-4 right-4 md:top-6 md:right-6 z-50">
-            <label className="cursor-pointer w-9 h-9 bg-gray-100/80 backdrop-blur-sm active:bg-gray-200 active:scale-95 rounded-xl flex items-center justify-center text-gray-900 transition-all shadow-sm" title={t('addImage')}>
+            <label className="cursor-pointer w-9 h-9 bg-gray-100/80 backdrop-blur-sm active:bg-gray-200 active:scale-95 rounded-xl flex items-center justify-center text-gray-900 transition-all shadow-sm" title="ເພີ່ມຮູບພາບ">
               <Plus size={18} />
               <input
                 type="file"
@@ -122,7 +120,7 @@ export default function UploadPage() {
             <button
               onClick={() => setShowStickerPicker((prev) => !prev)}
               className="cursor-pointer w-9 h-9 bg-gray-100/80 backdrop-blur-sm active:bg-gray-200 active:scale-95 rounded-xl flex items-center justify-center text-gray-900 transition-all shadow-sm"
-              title={t('stickers')}
+              title="ສະຕິກເກີ"
             >
               <Sticker size={18} />
             </button>
@@ -147,7 +145,7 @@ export default function UploadPage() {
                 />
               </div>
               <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-2">
-                {t('uploading', { progress: Math.round(uploadProgress) })}
+                ກຳລັງອັບໂຫລດຮູບ... {Math.round(uploadProgress)}%
               </p>
             </div>
           )}
@@ -173,14 +171,14 @@ export default function UploadPage() {
           >
             {/* Header */}
             <div className="flex items-center justify-between p-5 border-b border-gray-100">
-              <h3 className="text-xl font-bold">{t('designMockupTitle')}</h3>
+              <h3 className="text-xl font-bold">ຕົວຢ່າງສິນຄ້າ (Mockup)</h3>
               <button
                 onClick={() => {
                   setShowMockup(false);
                   setMockupAssetsLoaded({ bottom: false, top: false });
                 }}
                 className="p-2 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
-                title={tCommon('close')}
+                title="ປິດ"
               >
                 <X size={20} />
               </button>
@@ -192,14 +190,14 @@ export default function UploadPage() {
               {!isMockupReady && (
                 <div className="absolute inset-0 z-50 flex flex-col items-center justify-center gap-2 bg-white/90 backdrop-blur-sm">
                   <Loader2 className="w-8 h-8 animate-spin text-gray-300" />
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{tCommon('loading')}</p>
+                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">ກຳລັງໂຫລດ...</p>
                 </div>
               )}
 
               {/* Layer 1: Base Hanger Shirt (Bottom) */}
               <img
                 src="/assets/mockups/white-tshirt-hanger.png"
-                alt={t('overlayShirt')}
+                alt="ເສື້ອຍືດ"
                 onLoad={() => setMockupAssetsLoaded(prev => ({ ...prev, bottom: true }))}
                 className={`absolute inset-0 w-full h-full object-contain select-none pointer-events-none transition-opacity duration-300 ${mockupAssetsLoaded.bottom ? 'opacity-100' : 'opacity-0'}`}
                 style={{ transform: 'scale(0.7715)' }}
@@ -211,7 +209,7 @@ export default function UploadPage() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   src={previewUrl}
-                  alt={t('overlayDesign')}
+                  alt="ລາຍອອກແບບ"
                   className="absolute inset-0 w-full h-full object-contain select-none pointer-events-none mix-blend-multiply"
                   style={{
                     transformOrigin: "50% 64%",
@@ -223,7 +221,7 @@ export default function UploadPage() {
               {/* Layer 3: Texture & Shadow Overlay (Top) - Sandwich Method */}
               <img
                 src="/assets/mockups/overlay.png"
-                alt={t('overlayTexture')}
+                alt="ແສງແລະເງົາ"
                 onLoad={() => setMockupAssetsLoaded(prev => ({ ...prev, top: true }))}
                 className={`absolute inset-0 w-full h-full object-contain select-none pointer-events-none opacity-20 mix-blend-multiply transition-opacity duration-300 ${mockupAssetsLoaded.top ? 'opacity-20' : 'opacity-0'}`}
                 style={{

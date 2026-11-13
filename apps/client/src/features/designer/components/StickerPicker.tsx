@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useTranslations } from "next-intl";
 import { X, Upload, Sticker, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { useDesigner } from "../hooks/useDesigner";
@@ -12,7 +11,6 @@ interface StickerPickerProps {
 }
 
 export function StickerPicker({ designer, onClose }: StickerPickerProps) {
-  const t = useTranslations("Designer");
   const fileRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState<string | null>(null);
   const [presetStickers, setPresetStickers] = useState<string[]>([]);
@@ -53,7 +51,7 @@ export function StickerPicker({ designer, onClose }: StickerPickerProps) {
         <div className="flex items-center gap-2">
           <Sticker size={16} className="text-gray-700" />
           <span className="text-[11px] font-black uppercase tracking-widest text-gray-700">
-            {t("stickers")}
+            ສະຕິກເກີ
           </span>
         </div>
         <button
@@ -67,7 +65,7 @@ export function StickerPicker({ designer, onClose }: StickerPickerProps) {
       {/* Upload custom sticker */}
       <label className="w-full flex items-center justify-center gap-2 py-2.5 mb-3 border-2 border-dashed border-gray-300 rounded-[14px] cursor-pointer hover:border-black hover:bg-gray-50 transition-all text-[10px] font-bold uppercase tracking-widest text-gray-500 hover:text-black">
         <Upload size={14} />
-        {t("uploadSticker")}
+        ອັບໂຫລດ Sticker ຂອງທ່ານ
         <input
           ref={fileRef}
           type="file"
@@ -81,7 +79,7 @@ export function StickerPicker({ designer, onClose }: StickerPickerProps) {
       <div className="flex items-center gap-2 mb-3">
         <div className="flex-1 h-px bg-gray-100" />
         <span className="text-[9px] font-black uppercase tracking-widest text-gray-300">
-          {t("presets")}
+          ສຳເລັດຮູບ
         </span>
         <div className="flex-1 h-px bg-gray-100" />
       </div>
@@ -92,7 +90,7 @@ export function StickerPicker({ designer, onClose }: StickerPickerProps) {
           <Loader2 size={20} className="animate-spin" />
         </div>
       ) : presetStickers.length === 0 ? (
-        <p className="text-center text-[10px] text-gray-400 py-4">No preset stickers found.</p>
+        <p className="text-center text-[10px] text-gray-400 py-4">ບໍ່ພົບສະຕິກເກີສຳເລັດຮູບ</p>
       ) : (
         <div className="grid grid-cols-3 gap-2">
           {presetStickers.map((url) => (

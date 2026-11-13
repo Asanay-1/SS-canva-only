@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { useTranslations } from "next-intl";
 import { ShoppingBag, Eye } from "lucide-react";
 import type { Design } from "@/types";
 import { formatCurrency, formatNumber, cn } from "@/lib/utils";
@@ -17,7 +16,6 @@ const STATUS_STYLES = {
 };
 
 export function DesignCard({ design }: DesignCardProps) {
-  const t = useTranslations("Designs");
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.97 }}
@@ -53,7 +51,7 @@ export function DesignCard({ design }: DesignCardProps) {
             {formatCurrency(design.basePrice)}
           </span>
           <span className="text-[10px] font-bold text-gray-900 border-2 border-black px-2 py-0.5 rounded-none uppercase tracking-tighter">
-            {design.creatorFeePercent}% {t('fee')}
+            {design.creatorFeePercent}% ຄ່າທຳນຽມ
           </span>
         </div>
         <div className="flex items-center gap-3 mt-2 text-xs text-gray-400">

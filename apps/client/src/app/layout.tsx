@@ -1,8 +1,6 @@
-import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
-import "../globals.css";
+import "./globals.css";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -12,8 +10,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "SS",
-  description: "",
+  title: "SS - Social POD Platform",
+  description: "Social Print-on-Demand Platform in Laos",
 };
 
 export const viewport: Viewport = {
@@ -24,22 +22,15 @@ export const viewport: Viewport = {
 
 export const runtime = 'edge';
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
-  params,
 }: {
   children: React.ReactNode;
-  params: Promise<{ locale: string }>;
 }) {
-  const { locale } = await params;
-  const messages = await getMessages();
-  
   return (
-    <html lang={locale} className={inter.variable}>
+    <html lang="lo" className={inter.variable}>
       <body className="antialiased bg-gray-50 min-h-screen">
-        <NextIntlClientProvider messages={messages}>
-          {children}
-        </NextIntlClientProvider>
+        {children}
       </body>
     </html>
   );

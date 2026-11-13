@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
 import { DollarSign, TrendingUp, Package } from "lucide-react";
 import { PRODUCTION_COSTS, PLATFORM_FEE_PERCENT } from "@/features/tools/constants/mockup-templates";
@@ -69,7 +68,6 @@ export function ProfitSimulator({
   initialCreatorFeePercent = 15,
   onChange,
 }: ProfitSimulatorProps) {
-  const t = useTranslations("Tools");
   const [salePrice, setSalePrice] = useState(initialSalePrice);
   const [creatorFee, setCreatorFee] = useState(initialCreatorFeePercent);
 
@@ -104,7 +102,7 @@ export function ProfitSimulator({
         <div>
           <div className="flex items-center justify-between mb-2">
             <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">
-              {t('salePrice')}
+              ລາຄາຂາຍ
             </label>
             <span className="font-black text-gray-900 text-lg">${salePrice.toFixed(2)}</span>
           </div>
@@ -126,7 +124,7 @@ export function ProfitSimulator({
         <div>
           <div className="flex items-center justify-between mb-2">
             <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">
-              {t('creatorFee')}
+              ສ່ວນແບ່ງຜູ້ສ້າງ (Fee)
             </label>
             <span className="font-black text-gray-900 text-lg">{creatorFee}%</span>
           </div>
@@ -149,22 +147,22 @@ export function ProfitSimulator({
       {/* Visual Breakdown Bars */}
       <div className="bg-gray-50 rounded-2xl p-4 space-y-3">
         <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">
-          {t('revenueBreakdown')}
+          ລາຍລະອຽດລາຍຮັບ
         </p>
         <BarSegment
-          label={t('yourEarnings')}
+          label="ລາຍຮັບຂອງທ່ານ"
           value={breakdown.creatorEarnings}
           total={salePrice}
           color="#262626"
         />
         <BarSegment
-          label={t('platformFee')}
+          label="ຄ່າທຳນຽມລະບົບ"
           value={breakdown.platformEarnings}
           total={salePrice}
           color="#9ca3af"
         />
         <BarSegment
-          label={t('production')}
+          label="ຄ່າຜະລິດ"
           value={breakdown.productionCostActual}
           total={salePrice}
           color="#e5e7eb"
@@ -176,24 +174,24 @@ export function ProfitSimulator({
         <div className="bg-black text-white rounded-xl p-3 text-center">
           <DollarSign size={16} className="mx-auto mb-1 opacity-70" />
           <p className="font-black text-lg">${breakdown.creatorEarnings.toFixed(2)}</p>
-          <p className="text-[10px] font-medium uppercase tracking-wider opacity-60 mt-0.5">{t('youEarn')}</p>
+          <p className="text-[10px] font-medium uppercase tracking-wider opacity-60 mt-0.5">ທ່ານຈະໄດ້ຮັບ</p>
         </div>
         <div className="bg-gray-100 rounded-xl p-3 text-center">
           <Package size={16} className="mx-auto mb-1 text-gray-400" />
           <p className="font-black text-lg text-gray-700">${breakdown.productionCostActual.toFixed(2)}</p>
-          <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400 mt-0.5">{t('production')}</p>
+          <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400 mt-0.5">ຄ່າຜະລິດ</p>
         </div>
         <div className="bg-gray-100 rounded-xl p-3 text-center">
           <TrendingUp size={16} className="mx-auto mb-1 text-gray-400" />
           <p className="font-black text-lg text-gray-700">${Math.max(0, netToSeller).toFixed(2)}</p>
-          <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400 mt-0.5">{t('netSale')}</p>
+          <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400 mt-0.5">ກຳໄລ / ໂຕ</p>
         </div>
       </div>
 
       {/* Warning */}
       {breakdown.creatorEarnings < 1 && (
         <p className="text-xs text-red-500 text-center font-medium">
-          {t('lowEarningsWarning')}
+          ⚠️ ລາຍຮັບຕໍ່າຫຼາຍ ຄວນພິຈາລະນາປັບລາຄາຂຶ້ນ
         </p>
       )}
     </motion.div>

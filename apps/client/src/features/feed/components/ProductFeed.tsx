@@ -2,13 +2,11 @@
 
 import { FeedCard } from "./FeedCard";
 import { MOCK_FEED_ITEMS } from "@/lib/mock-data";
-import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { Search, Info } from "lucide-react";
 import { useState } from "react";
 
 export function ProductFeed() {
-  const t = useTranslations("Feed");
   const [searchQuery, setSearchQuery] = useState("");
 
   const COL_SPAN: Record<number, string> = {
@@ -34,7 +32,7 @@ export function ProductFeed() {
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-black transition-colors" size={20} />
           <input
             type="text"
-            placeholder={t('searchPlaceholder')}
+            placeholder="ຄົ້ນຫາລາຍທີ່ແມ່ນສຳລັບເຈົ້າ..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-12 pr-4 py-4 bg-white border-2 border-black rounded-none focus:outline-none focus:ring-0 placeholder:text-gray-400 font-bold uppercase text-xs tracking-widest transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:translate-x-[2px] focus:translate-y-[2px] focus:shadow-none"
@@ -45,10 +43,10 @@ export function ProductFeed() {
       {/* Tabs */}
       <div className="flex items-center gap-2 px-1">
         <button className="px-4 py-2 text-[10px] font-black text-white bg-black border-2 border-black rounded-none uppercase tracking-widest transition-all shadow-[2px_2px_0px_0px_rgba(38,38,38,0.4)]">
-          {t('trending')}
+          ກຳລັງມາແຮງ
         </button>
         <button className="px-4 py-2 text-[10px] font-black text-black bg-white border-2 border-black rounded-none uppercase tracking-widest transition-all hover:bg-gray-50">
-          {t('newArrivals')}
+          ມາໃໝ່
         </button>
       </div>
 
@@ -72,7 +70,7 @@ export function ProductFeed() {
         <div className="flex flex-col items-center justify-center py-20 bg-gray-50 border-2 border-dashed border-gray-200">
           <Info className="mb-4 text-gray-300" size={48} />
           <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">
-            {t('noResults', { query: searchQuery })}
+            {searchQuery ? `ບໍ່ພົບຜົນລັບສຳລັບ "${searchQuery}"` : "ບໍ່ມີສິນຄ້າ"}
           </p>
         </div>
       )}
