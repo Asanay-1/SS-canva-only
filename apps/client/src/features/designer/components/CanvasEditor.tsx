@@ -94,7 +94,7 @@ export function CanvasEditor({ onInit, onPublish, isSubmitting, hasArtwork }: Ca
     const handleTouchStart = (e: TouchEvent) => {
       if (e.touches.length === 2) {
         e.preventDefault();
-        e.stopImmediatePropagation(); // ป้องกันไม่ให้ Fabric.js จัดการ Event นี้ (ป้องกันรูปขยาย)
+        e.stopImmediatePropagation();
         const p1 = e.touches[0];
         const p2 = e.touches[1];
         initialPinchDist = Math.hypot(p2.clientX - p1.clientX, p2.clientY - p1.clientY);
@@ -246,7 +246,7 @@ export function CanvasEditor({ onInit, onPublish, isSubmitting, hasArtwork }: Ca
             type="button"
             onClick={designer.flipObject}
             className="p-2 hover:bg-white/10 rounded-xl transition-colors text-gray-300"
-            title="ພິກແນວນອນ"
+            title="ກັບດ້ານ"
           >
             <FlipHorizontal size={18} />
           </button>
@@ -257,7 +257,7 @@ export function CanvasEditor({ onInit, onPublish, isSubmitting, hasArtwork }: Ca
             type="button"
             onClick={designer.rotateObject}
             className="p-2 hover:bg-white/10 rounded-xl transition-colors text-gray-300"
-            title="ໝູນ 45°"
+            title="ຫມຸນ 45°"
           >
             <RotateCw size={18} />
           </button>
@@ -268,7 +268,7 @@ export function CanvasEditor({ onInit, onPublish, isSubmitting, hasArtwork }: Ca
             type="button"
             onClick={designer.bringForward}
             className="p-2 hover:bg-white/10 rounded-xl transition-colors text-gray-300"
-            title="ຍ້າຍຂຶ້ນຊັ້ນເທິງ"
+            title="ຍ້າຍຂຶ້ນເທິງ"
           >
             <ChevronUp size={18} />
           </button>
@@ -277,7 +277,7 @@ export function CanvasEditor({ onInit, onPublish, isSubmitting, hasArtwork }: Ca
             type="button"
             onClick={designer.sendBackwards}
             className="p-2 hover:bg-white/10 rounded-xl transition-colors text-gray-300"
-            title="ຍ້າຍລົງຊັ້ນລຸ່ມ"
+            title="ຍ້າຍລົງລຸ່ມ"
           >
             <ChevronDown size={18} />
           </button>

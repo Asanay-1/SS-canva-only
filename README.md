@@ -1,28 +1,23 @@
-# SS - Social POD Platform
-
-A print-on-demand (POD) and creator platform built with Next.js 15, Fabric.js, and Cloudflare Pages.
-
 ## Tech Stack
 
 - **Framework**: Next.js 15 (App Router, Edge Runtime)
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS
-- **Primary Language**: Lao (Phetsarath font optimized)
+- **Primary Language**: Lao
 - **Canvas Engine**: Fabric.js
 - **UI & Animation**: Lucide React, Framer Motion, Recharts
-- **Architecture**: npm Workspaces monorepo with feature-first modules
 
-## Project Structure
+## Directory Overview
 
 ```text
-ss-ecosystem/
+SS/
 ├── apps/
 │   └── client/                 # Web client (Next.js 15 App Router)
 │       ├── public/             # Static assets (mockups, stickers)
 │       └── src/
-│           ├── app/            # App router (Lao UI)
+│           ├── app/            # App router
 │           ├── components/     # Shared UI and layout components
-│           ├── features/       # Domain modules (designer, dashboard, feed, wallet, checkout)
+│           ├── features/       # Domain modules
 │           ├── hooks/          # Shared custom hooks
 │           └── lib/            # Utilities and helper functions
 ├── packages/

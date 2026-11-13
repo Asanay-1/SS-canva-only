@@ -51,7 +51,7 @@ export function StickerPicker({ designer, onClose }: StickerPickerProps) {
         <div className="flex items-center gap-2">
           <Sticker size={16} className="text-gray-700" />
           <span className="text-[11px] font-black uppercase tracking-widest text-gray-700">
-            ສະຕິກເກີ
+            ສະຕິກເກີ້
           </span>
         </div>
         <button
@@ -65,7 +65,7 @@ export function StickerPicker({ designer, onClose }: StickerPickerProps) {
       {/* Upload custom sticker */}
       <label className="w-full flex items-center justify-center gap-2 py-2.5 mb-3 border-2 border-dashed border-gray-300 rounded-[14px] cursor-pointer hover:border-black hover:bg-gray-50 transition-all text-[10px] font-bold uppercase tracking-widest text-gray-500 hover:text-black">
         <Upload size={14} />
-        ອັບໂຫລດ Sticker ຂອງທ່ານ
+        ອັບໂຫລດ ສະຕິກເກີ້
         <input
           ref={fileRef}
           type="file"
@@ -79,7 +79,7 @@ export function StickerPicker({ designer, onClose }: StickerPickerProps) {
       <div className="flex items-center gap-2 mb-3">
         <div className="flex-1 h-px bg-gray-100" />
         <span className="text-[9px] font-black uppercase tracking-widest text-gray-300">
-          ສຳເລັດຮູບ
+          List
         </span>
         <div className="flex-1 h-px bg-gray-100" />
       </div>
@@ -90,7 +90,7 @@ export function StickerPicker({ designer, onClose }: StickerPickerProps) {
           <Loader2 size={20} className="animate-spin" />
         </div>
       ) : presetStickers.length === 0 ? (
-        <p className="text-center text-[10px] text-gray-400 py-4">ບໍ່ພົບສະຕິກເກີສຳເລັດຮູບ</p>
+        <p className="text-center text-[10px] text-gray-400 py-4">ບໍ່ພົບສະຕິກເກີ້</p>
       ) : (
         <div className="grid grid-cols-3 gap-2">
           {presetStickers.map((url) => (
