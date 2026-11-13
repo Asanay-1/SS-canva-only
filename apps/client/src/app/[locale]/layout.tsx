@@ -7,13 +7,13 @@ import "../globals.css";
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
-  display: "swap", // ช่วยให้ข้อความขึ้นทันทีไม่ต้องรอโหลด font เสร็จ
+  display: "swap",
   adjustFontFallback: true,
 });
 
 export const metadata: Metadata = {
   title: "SS",
-  description: "Unified platform for creators and consumers.",
+  description: "",
 };
 
 export const viewport: Viewport = {

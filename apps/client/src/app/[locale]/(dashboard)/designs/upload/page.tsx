@@ -81,21 +81,9 @@ export default function UploadPage() {
   };
 
   return (
-    <div className="w-full max-w-[1400px] mx-auto min-h-screen pb-20 flex flex-col gap-6 p-0 md:p-6 lg:p-0 overflow-x-hidden">
+    <div className="w-full mx-auto min-h-screen pb-20 flex flex-col gap-6 p-0 md:p-6 lg:p-0 overflow-x-hidden">
       {/* Top Header */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Link
-            href="/designs"
-            className="flex items-center justify-center text-gray-400 hover:text-gray-900 transition-colors pr-2"
-          >
-            <ArrowLeft size={24} />
-          </Link>
-          <div>
-            <h2 className="text-xl font-bold text-gray-900 leading-tight">{tCommon('newDesign')}</h2>
-            <p className="text-xs text-gray-500 font-medium uppercase tracking-wider mt-0.5">{t('editorSubtitle')}</p>
-          </div>
-        </div>
 
         <motion.button
           onClick={onPublish}
@@ -113,7 +101,7 @@ export default function UploadPage() {
       </div>
 
       {/* Main Designer Area */}
-      <div className="flex-1 flex flex-col lg:flex-row gap-6">
+      <div className="flex-1 flex lex-col lg:flex-row gap-6">
         {/* Left: Editor (Now taking full width) */}
         <div className="w-full bg-white rounded-[32px] p-1 md:p-6 border-2 border-gray-200 flex flex-col relative min-w-0 min-h-[400px] lg:min-h-[750px] lg:max-h-[720px]">
           {/* Floating Action Buttons - Top Right: Add Image */}

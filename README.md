@@ -16,29 +16,67 @@
 ### Monorepo Structure
 - **npm Workspaces**: จัดการหลายโปรเจกต์ภายใต้ Root เดียวกัน
 
-## 📁 โครงสร้างโปรเจกต์ (Folder Structure)
+## 📁 โครงสร้างโปรเจกต์ (Directory Overview)
 
-โปรเจกต์นี้ใช้โครงสร้างแบบ **Feature-First** เพื่อความง่ายในการขยายระบบ (Scalability):
+โปรเจกต์นี้ใช้โครงสร้างแบบ Monorepo (npm workspaces) ควบคู่กับสถาปัตยกรรม **Feature-First** ภายใน `apps/client`:
 
 ```text
-/
+ss-ecosystem/
 ├── apps/
-│   └── client/               # แอปพลิเคชันหลัก (Next.js)
-│       ├── messages/         # ไฟล์แปลภาษา (.json)
-│       ├── public/           # ไฟล์สติกเกอร์และ Mockup ต่างๆ
+│   └── client/                           # Next.js 15 App Router (Cloudflare Edge Pages)
+│       ├── messages/                     # ไฟล์แปลภาษา i18n (next-intl)
+│       │   ├── en.json                   # English translations
+│       │   ├── lo.json                   # Lao translations (Phetsarath font optimized)
+│       │   └── th.json                   # Thai translations
+│       ├── public/                       # Static assets
+│       │   ├── assets/
+│       │   │   ├── mockups/              # Mockup images (Base shirt, shadow, overlay)
+│       │   │   ├── stickers/             # Sticker graphics for canvas
+│       │   │   └── stickers.json         # Sticker metadata catalog
+│       │   ├── mockups/                  # Mockup asset alias directory
+│       │   └── stickers/                 # Sticker asset alias directory
+│       ├── src/
+│       │   ├── app/                      # App Router core
+│       │   │   ├── [locale]/             # Dynamic i18n root (/en, /th, /lo)
+│       │   │   │   ├── (dashboard)/      # Creator Dashboard route group
+│       │   │   │   │   ├── designs/      # Portfolio list view
+│       │   │   │   │   │   └── upload/   # Upload design & set pricing
+│       │   │   │   │   └── layout.tsx    # Dashboard shell layout
+│       │   │   │   └── layout.tsx        # Root locale layout with NextIntlClientProvider
+│       │   │   ├── api/                  # Edge API endpoints
+│       │   │   └── globals.css           # Tailwind base styles & Lao typography setup
+│       │   ├── components/               # Shared cross-feature UI
+│       │   │   ├── common/               # Shared common components
+│       │   │   ├── layout/               # Header, navigation, shell components
+│       │   │   └── ui/                   # Primitive UI components (shadcn pattern)
+│       │   ├── features/                 # Feature-first domain modules
+│       │   │   ├── checkout/             # Order processing & cart flow
+│       │   │   ├── dashboard/            # Metrics & visual analytics (RevenueChart, StatCard)
+│       │   │   ├── designer/             # Fabric.js Canvas Editor, sticker picker & mockup engine
+│       │   │   ├── designs/              # Design management (DesignCard, UploadZone)
+│       │   │   ├── feed/                 # Social discovery product feed (ProductFeed, FeedCard)
+│       │   │   ├── studio/               # Creator studio editor actions & flows
+│       │   │   ├── tools/                # Utility tools (ProfitSimulator, mockup templates)
+│       │   │   └── wallet/               # Creator earnings & payout logic
+│       │   ├── hooks/                    # Global reusable React hooks
+│       │   ├── i18n/                     # next-intl configuration (routing.ts, request.ts)
+│       │   ├── lib/                      # Shared client libs (utils.ts, mock-data.ts)
+│       │   ├── middleware.ts             # Locale detection & rewrite middleware
+│       │   ├── store/                    # Global client-side state
+│       │   ├── types/                    # App-specific TypeScript declarations
+│       │   └── utils/                    # Utility helpers (currency.ts for LAK/THB/USD)
+│       ├── next.config.ts                # Next.js build & edge runtime configuration
+│       ├── package.json                  # Client workspace dependencies
+│       ├── postcss.config.mjs            # PostCSS plugin setup
+│       ├── tailwind.config.ts            # Tailwind CSS design system tokens
+│       └── tsconfig.json                 # TypeScript compiler options
+├── packages/
+│   └── types/                            # Shared workspace package for cross-app TypeScript types
 │       └── src/
-│           ├── app/          # App Router (i18n Routing)
-│           ├── components/   # UI Components ส่วนกลาง
-│           ├── features/     # หัวใจสำคัญ แยกตามฟีเจอร์ (Feature-First)
-│           │   ├── auth/     # ระบบเข้าสู่ระบบ
-│           │   ├── designer/ # เครื่องมือออกแบบ Canvas
-│           │   ├── feed/     # ระบบฟีดสินค้า
-│           │   └── ...
-│           ├── i18n/         # การตั้งค่าภาษา
-│           └── lib/          # ยูทิลิตี้และ Mock Data
-├── packages/                 # แพ็กเกจที่ใช้ร่วมกัน
-│   └── types/                # Shared TypeScript Definitions
-└── README.md                 # เอกสารแนะนำโปรเจกต์
+├── package.json                          # Monorepo root workspaces & orchestrator scripts
+├── progress.md                           # Development milestone logs
+├── rules.md                              # Core architectural & i18n rules
+└── README.md                             # Project overview & documentation
 ```
 
 ## 🔄 การไหลของข้อมูล (Data Flow)
