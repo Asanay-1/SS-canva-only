@@ -1,6 +1,6 @@
 # revive my old project
 ## discussion
-strip everytihng out leaving only the canvas with minor ux/ui improvement, built into static and deploy on cloudflare page 
+strip everytihng out leaving only the canvas with minor ux/ui improvement, built into static and host on a github page 
 
 ## Main web language
 - Lao

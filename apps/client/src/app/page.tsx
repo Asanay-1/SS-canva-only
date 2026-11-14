@@ -9,6 +9,7 @@ import { Loader2, Upload, Plus, X, Sticker, Download, Wand2 } from "lucide-react
 import { CanvasEditor } from "@/features/designer/components/CanvasEditor";
 import { useDesigner } from "@/features/designer/hooks/useDesigner";
 import { StickerPicker } from "@/features/designer/components/StickerPicker";
+import { ActionToolbar } from "@/features/designer/components/ActionToolbar";
 
 export default function DesignerPage() {
   const designer = useDesigner();
@@ -197,7 +198,7 @@ export default function DesignerPage() {
         </div>
 
         {/* Main Designer Area */}
-        <div className="w-full aspect-square bg-white rounded-xl p-2 md:p-6 border-2 border-gray-200 flex flex-col relative min-w-0">
+        <div className="w-full aspect-square bg-gray-100 rounded-xl border-2 border-gray-200 relative min-w-0 overflow-hidden">
             {/* Floating Action Buttons - Top Right: Add Image */}
             <div className="absolute top-4 right-4 md:top-6 md:right-6 z-50">
               <label className="cursor-pointer w-9 h-9 bg-gray-100/80 backdrop-blur-sm active:bg-gray-200 active:scale-95 rounded-xl flex items-center justify-center text-gray-900 transition-all shadow-sm" title="ເພີ່ມຮູບພາບ">
@@ -236,21 +237,21 @@ export default function DesignerPage() {
 
             {/* Progress Bar */}
             {isUploading && (
-              <div className="mx-6 mb-2">
-                <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+              <div className="absolute top-16 left-6 right-6 z-50">
+                <div className="h-1.5 w-full bg-gray-200/80 backdrop-blur-sm rounded-full overflow-hidden">
                   <motion.div
                     className="h-full bg-black"
                     initial={{ width: 0 }}
                     animate={{ width: `${uploadProgress}%` }}
                   />
                 </div>
-                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-2">
+                <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-1.5 drop-shadow-sm">
                   ກຳລັງອັບໂຫລດຮູບ... {Math.round(uploadProgress)}%
                 </p>
               </div>
             )}
 
-            <div className="flex-1 relative overflow-hidden flex flex-col">
+            <div className="w-full h-full relative overflow-hidden">
               <CanvasEditor
                 designer={designer}
                 onPublish={onPublish}
@@ -259,6 +260,13 @@ export default function DesignerPage() {
               />
             </div>
           </div>
+
+        {/* Mobile Action Toolbar - Outside and below canvas horizontally */}
+        {designer && (
+          <div className="flex md:hidden items-center justify-center w-full">
+            <ActionToolbar designer={designer} orientation="horizontal" />
+          </div>
+        )}
 
         {/* Actions outside/below canvas */}
         <AnimatePresence>

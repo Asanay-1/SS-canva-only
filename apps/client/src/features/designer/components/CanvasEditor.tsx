@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { useDesigner } from "../hooks/useDesigner";
 import { motion } from "framer-motion";
-import { Trash2, Maximize, MousePointer2, FlipHorizontal, Save, Loader2, RotateCcw, Send, AlignCenter, RotateCw, RefreshCw, ChevronUp, ChevronDown } from "lucide-react";
+import { ActionToolbar } from "./ActionToolbar";
 
 interface CanvasEditorProps {
   designer: ReturnType<typeof useDesigner>;
@@ -175,17 +175,14 @@ export function CanvasEditor({ designer, onInit, onPublish, isSubmitting, hasArt
   }, [designer.initCanvas, onInit]);
 
   return (
-    <div className="flex flex-col md:flex-row gap-6 w-full flex-1 pb-2 overflow-hidden items-center justify-center">
-      {/* 0. Left Symmetrical Spacer (Desktop Only) */}
-      <div className="hidden md:block w-[72px]" />
-
+    <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
       {/* 1. Main Canvas Area */}
       <div
         ref={wrapperRef}
-        className="flex-1 w-full flex items-center justify-center p-0 md:p-2 select-none no-drag canvas-container-wrapper relative overflow-hidden"
+        className="w-full h-full flex items-center justify-center p-0 md:p-12 select-none no-drag canvas-container-wrapper relative overflow-hidden"
         onDragStart={(e) => e.preventDefault()}
       >
-        <div className="relative w-full max-w-[666px] aspect-square bg-transparent mx-auto no-drag">
+        <div className="relative w-full h-full max-w-full max-h-full aspect-square bg-transparent mx-auto no-drag">
           {/* Layer 0: Base Image (Bottom) */}
           <img
             src="/assets/mockups/canvas.png"
@@ -219,69 +216,9 @@ export function CanvasEditor({ designer, onInit, onPublish, isSubmitting, hasArt
         </div>
       </div>
 
-      {/* 2. Action Toolbar - Responsive Sidebar (Inside the Box) */}
-      <div className="flex flex-col items-center shrink-0 w-[72px]">
-        <div id="action-toolbar" className="bg-black text-white px-3 py-3 rounded-[24px] flex flex-row md:flex-col items-center gap-2 border border-white/10 shrink-0">
-          <button
-            type="button"
-            onClick={designer.deleteSelected}
-            className="p-2 hover:bg-white/10 rounded-xl transition-colors text-red-400"
-            title="ລຶບທີ່ເລືອກ"
-          >
-            <Trash2 size={18} />
-          </button>
-
-          <div className="w-px h-5 md:w-5 md:h-px bg-white/10" />
-
-          <button
-            type="button"
-            onClick={designer.centerObjectH}
-            className="p-2 hover:bg-white/10 rounded-xl transition-colors text-gray-300"
-            title="ຈັດວາງເຄິ່ງກາງ"
-          >
-            <AlignCenter size={18} />
-          </button>
-
-          <button
-            type="button"
-            onClick={designer.flipObject}
-            className="p-2 hover:bg-white/10 rounded-xl transition-colors text-gray-300"
-            title="ກັບດ້ານ"
-          >
-            <FlipHorizontal size={18} />
-          </button>
-
-          <div className="w-px h-5 md:w-5 md:h-px bg-white/10" />
-
-          <button
-            type="button"
-            onClick={designer.rotateObject}
-            className="p-2 hover:bg-white/10 rounded-xl transition-colors text-gray-300"
-            title="ຫມຸນ 45°"
-          >
-            <RotateCw size={18} />
-          </button>
-
-          <div className="w-px h-5 md:w-5 md:h-px bg-white/10" />
-
-          <button
-            type="button"
-            onClick={designer.bringForward}
-            className="p-2 hover:bg-white/10 rounded-xl transition-colors text-gray-300"
-            title="ຍ້າຍຂຶ້ນເທິງ"
-          >
-            <ChevronUp size={18} />
-          </button>
-
-          <button
-            type="button"
-            onClick={designer.sendBackwards}
-            className="p-2 hover:bg-white/10 rounded-xl transition-colors text-gray-300"
-            title="ຍ້າຍລົງລຸ່ມ"
-          >
-            <ChevronDown size={18} />
-          </button>
-        </div>
+      {/* 2. Action Toolbar - Floating Sidebar (Desktop Only) */}
+      <div className="hidden md:block absolute right-3 md:right-4 top-1/2 -translate-y-1/2 z-40">
+        <ActionToolbar designer={designer} orientation="vertical" />
       </div>
     </div>
   );
