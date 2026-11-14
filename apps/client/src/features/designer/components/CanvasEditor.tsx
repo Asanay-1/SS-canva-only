@@ -2,8 +2,6 @@
 
 import { useEffect, useRef } from "react";
 import { useDesigner } from "../hooks/useDesigner";
-import { motion } from "framer-motion";
-import { ActionToolbar } from "./ActionToolbar";
 
 interface CanvasEditorProps {
   designer: ReturnType<typeof useDesigner>;
@@ -179,15 +177,15 @@ export function CanvasEditor({ designer, onInit, onPublish, isSubmitting, hasArt
       {/* 1. Main Canvas Area */}
       <div
         ref={wrapperRef}
-        className="w-full h-full flex items-center justify-center p-0 md:p-12 select-none no-drag canvas-container-wrapper relative overflow-hidden"
+        className="w-full h-full flex items-center justify-center select-none no-drag canvas-container-wrapper relative overflow-hidden"
         onDragStart={(e) => e.preventDefault()}
       >
-        <div className="relative w-full h-full max-w-full max-h-full aspect-square bg-transparent mx-auto no-drag">
+        <div className="relative w-full h-full aspect-square bg-transparent mx-auto no-drag">
           {/* Layer 0: Base Image (Bottom) */}
           <img
             src="/assets/mockups/canvas.png"
             alt="T-shirt Base"
-            className="absolute inset-0 w-full h-full object-contain pointer-events-none z-0 select-none no-drag md:[transform:scale(1.21)]"
+            className="absolute inset-0 w-full h-full object-contain pointer-events-none z-0 select-none no-drag"
             style={{ transform: 'scale(1.265)' }}
             draggable={false}
             onDragStart={(e) => e.preventDefault()}
@@ -214,11 +212,6 @@ export function CanvasEditor({ designer, onInit, onPublish, isSubmitting, hasArt
 
           <div className="absolute inset-0 w-full h-full pointer-events-none z-20 mix-blend-multiply" />
         </div>
-      </div>
-
-      {/* 2. Action Toolbar - Floating Sidebar (Desktop Only) */}
-      <div className="hidden md:block absolute right-3 md:right-4 top-1/2 -translate-y-1/2 z-40">
-        <ActionToolbar designer={designer} orientation="vertical" />
       </div>
     </div>
   );

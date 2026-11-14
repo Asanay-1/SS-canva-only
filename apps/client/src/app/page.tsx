@@ -2,7 +2,7 @@
 
 export const runtime = 'edge';
 
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Loader2, Upload, Plus, X, Sticker, Download, Wand2 } from "lucide-react";
 
@@ -178,15 +178,15 @@ export default function DesignerPage() {
   };
 
   return (
-    <main className="flex-1 px-4 md:px-6 py-5 pb-24 md:pb-8 flex flex-col items-center">
-      <div className="w-full max-w-2xl flex flex-col gap-4">
+    <main className="flex-1 px-4 md:px-6 py-4 md:py-6 flex flex-col items-center">
+      <div className="w-full max-w-2xl flex flex-col gap-3 md:gap-4 relative">
         {/* Top Header */}
         <div className="flex items-center justify-end">
           <motion.button
             onClick={onPublish}
             disabled={isSubmitting}
             whileTap={{ scale: 0.95 }}
-            className="w-10 h-10 bg-black text-white rounded-xl flex items-center justify-center hover:bg-gray-800 transition-all disabled:opacity-30 shadow-lg shadow-black/10"
+            className="w-9 h-9 md:w-10 md:h-10 bg-black text-white rounded-xl flex items-center justify-center hover:bg-gray-800 transition-all disabled:opacity-30 shadow-lg shadow-black/10 cursor-pointer"
             title="ເບິ່ງຜົນງານ"
           >
             {isSubmitting ? (
@@ -197,10 +197,32 @@ export default function DesignerPage() {
           </motion.button>
         </div>
 
-        {/* Main Designer Area */}
-        <div className="w-full aspect-square bg-white rounded-xl border-2 border-gray-200 relative min-w-0 overflow-hidden">
+        {/* Progress Bar */}
+        <AnimatePresence>
+          {isUploading && (
+            <motion.div
+              initial={{ opacity: 0, y: -4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.15 }}
+              className="w-full"
+            >
+              <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+                <motion.div
+                  className="h-full bg-black"
+                  initial={{ width: 0 }}
+                  animate={{ width: `${uploadProgress}%` }}
+                />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Main Designer Area & Desktop Toolbar */}
+        <div className="w-full relative">
+          <div className="w-full aspect-square bg-white rounded-xl border-2 border-gray-200 relative min-w-0 overflow-hidden shadow-sm">
             {/* Floating Action Buttons - Top Right: Add Image */}
-            <div className="absolute top-4 right-4 md:top-6 md:right-6 z-50">
+            <div className="absolute top-4 right-4 md:top-6 md:right-6 z-20">
               <label className="cursor-pointer w-9 h-9 bg-gray-100/80 backdrop-blur-sm active:bg-gray-200 active:scale-95 rounded-xl flex items-center justify-center text-gray-900 transition-all shadow-sm" title="ເພີ່ມຮູບພາບ">
                 <Plus size={18} />
                 <input
@@ -213,7 +235,7 @@ export default function DesignerPage() {
             </div>
 
             {/* Floating Action Buttons - Top Left: Stickers */}
-            <div className="absolute top-4 left-4 md:top-6 md:left-6 z-50">
+            <div className="absolute top-4 left-4 md:top-6 md:left-6 z-20">
               <button
                 ref={stickerButtonRef}
                 onClick={() => setShowStickerPicker((prev) => !prev)}
@@ -222,34 +244,7 @@ export default function DesignerPage() {
               >
                 <Sticker size={18} />
               </button>
-
-              {/* Sticker Picker Panel */}
-              <AnimatePresence>
-                {showStickerPicker && designer && (
-                  <StickerPicker
-                    designer={designer}
-                    onClose={() => setShowStickerPicker(false)}
-                    triggerRef={stickerButtonRef}
-                  />
-                )}
-              </AnimatePresence>
             </div>
-
-            {/* Progress Bar */}
-            {isUploading && (
-              <div className="absolute top-16 left-6 right-6 z-50">
-                <div className="h-1.5 w-full bg-gray-200/80 backdrop-blur-sm rounded-full overflow-hidden">
-                  <motion.div
-                    className="h-full bg-black"
-                    initial={{ width: 0 }}
-                    animate={{ width: `${uploadProgress}%` }}
-                  />
-                </div>
-                <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-1.5 drop-shadow-sm">
-                  ກຳລັງອັບໂຫລດຮູບ... {Math.round(uploadProgress)}%
-                </p>
-              </div>
-            )}
 
             <div className="w-full h-full relative overflow-hidden">
               <CanvasEditor
@@ -260,6 +255,14 @@ export default function DesignerPage() {
               />
             </div>
           </div>
+
+          {/* Desktop Action Toolbar - Outside on the right side of the canvas */}
+          {designer && (
+            <div className="hidden md:flex absolute -right-16 lg:-right-20 top-1/2 -translate-y-1/2 z-20">
+              <ActionToolbar designer={designer} orientation="vertical" />
+            </div>
+          )}
+        </div>
 
         {/* Mobile Action Toolbar - Outside and below canvas horizontally */}
         {designer && (
@@ -276,7 +279,7 @@ export default function DesignerPage() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -4 }}
               transition={{ duration: 0.15, ease: "easeOut" }}
-              className="flex items-center justify-start"
+              className="flex items-center justify-start w-full"
             >
               <button
                 type="button"
@@ -306,6 +309,17 @@ export default function DesignerPage() {
           )}
         </AnimatePresence>
 
+        {/* Independent Sticker Window */}
+        <AnimatePresence>
+          {showStickerPicker && designer && (
+            <StickerPicker
+              designer={designer}
+              onClose={() => setShowStickerPicker(false)}
+              triggerRef={stickerButtonRef}
+            />
+          )}
+        </AnimatePresence>
+
         {/* Mockup Modal */}
         <AnimatePresence>
           {showMockup && previewUrl && (
@@ -329,7 +343,7 @@ export default function DesignerPage() {
                 className="w-full max-w-xl flex flex-col items-center gap-3 md:gap-4 cursor-default select-none"
               >
                 {/* Mockup Card */}
-                <div className="relative w-full aspect-square bg-white rounded-xl overflow-hidden shadow-2xl flex items-center justify-center">
+                <div className="relative w-full aspect-square bg-white rounded-3xl overflow-hidden shadow-2xl flex items-center justify-center">
                   {/* Close Button - Top Left Inside Image, No Background */}
                   <button
                     onClick={() => {
@@ -385,11 +399,11 @@ export default function DesignerPage() {
                   />
                 </div>
 
-                {/* Download Button */}
+                {/* Download Button - Outside Below Mockup */}
                 <button
                   onClick={handleDownloadMockup}
                   disabled={!isMockupReady || isDownloading}
-                  className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-gray-900 text-white hover:bg-gray-800 text-sm font-semibold rounded-md backdrop-blur-sm transition-all active:scale-95 disabled:opacity-40 shadow-lg cursor-pointer"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-white text-gray-900 hover:bg-gray-100 text-sm font-semibold rounded-xl backdrop-blur-sm transition-all active:scale-95 disabled:opacity-40 shadow-lg cursor-pointer"
                 >
                   {isDownloading ? (
                     <Loader2 size={16} className="animate-spin" />
