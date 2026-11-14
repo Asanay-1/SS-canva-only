@@ -1,9 +1,8 @@
 ## Tech Stack
 
-- **Framework**: Next.js 15 (App Router, Edge Runtime)
+- **Framework**: Next.js 15 (App Router)
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS
-- **Primary Language**: Lao
 - **Canvas Engine**: Fabric.js
 - **UI & Animation**: Lucide React, Framer Motion, Recharts
 
@@ -52,25 +51,3 @@ npm run dev:client
 npm run build
 ```
 
-## Key Architecture
-
-- **Canvas Designer**: Fabric.js provides client-side canvas manipulation, sticker layering, and mockup rendering.
-- **Language**: Native Lao interface with font optimization for Lao (Phetsarath OT) script.
-- **Feature-First Modules**: Domain logic, state, and components reside in self-contained directories under `src/features/`.
-- **Edge-Ready**: Optimized for Cloudflare Pages and Edge execution using lightweight dependencies.
-
-## Cloudflare Pages Deployment
-
-This application deploys to Cloudflare Pages using `@cloudflare/next-on-pages`.
-
-### Cloudflare Settings
-
-- **Framework Preset**: Next.js
-- **Root Directory**: `apps/client`
-- **Build Command**: `npm run build && npx @cloudflare/next-on-pages`
-- **Build Output Directory**: `.vercel/output/static`
-- **Compatibility Flags**: `nodejs_compat` (configured under **Settings > Functions**)
-
-### Technical Notes
-
-- All routes target the Edge runtime (`export const runtime = 'edge'`).
