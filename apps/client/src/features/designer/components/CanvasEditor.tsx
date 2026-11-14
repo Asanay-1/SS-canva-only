@@ -6,14 +6,14 @@ import { motion } from "framer-motion";
 import { Trash2, Maximize, MousePointer2, FlipHorizontal, Save, Loader2, RotateCcw, Send, AlignCenter, RotateCw, RefreshCw, ChevronUp, ChevronDown } from "lucide-react";
 
 interface CanvasEditorProps {
-  onInit: (designer: ReturnType<typeof useDesigner>) => void;
-  onPublish: () => void;
-  isSubmitting: boolean;
-  hasArtwork: boolean;
+  designer: ReturnType<typeof useDesigner>;
+  onInit?: (designer: ReturnType<typeof useDesigner>) => void;
+  onPublish?: () => void;
+  isSubmitting?: boolean;
+  hasArtwork?: boolean;
 }
 
-export function CanvasEditor({ onInit, onPublish, isSubmitting, hasArtwork }: CanvasEditorProps) {
-  const designer = useDesigner();
+export function CanvasEditor({ designer, onInit, onPublish, isSubmitting, hasArtwork }: CanvasEditorProps) {
   const canvasElementRef = useRef<HTMLCanvasElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const transformRef = useRef({ scale: 1, x: 0, y: 0 });
@@ -169,7 +169,7 @@ export function CanvasEditor({ onInit, onPublish, isSubmitting, hasArtwork }: Ca
   useEffect(() => {
     if (canvasElementRef.current) {
       const cleanup = designer.initCanvas(canvasElementRef.current);
-      onInit(designer);
+      if (onInit) onInit(designer);
       return cleanup;
     }
   }, [designer.initCanvas, onInit]);

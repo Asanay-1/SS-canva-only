@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useCallback, useMemo, useState } from "react";
 import * as fabric from "fabric";
+import { removeBackgroundWithRMBG } from "../utils/background-remover";
 
 const SVG_VIEWBOX = 639.84;
 const LAYOUT_SIZE = 1333;
@@ -17,6 +18,7 @@ export function useDesigner() {
   const canvasRef = useRef<fabric.Canvas | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [isInteracting, setIsInteracting] = useState(false);
+  const [selectedLayerType, setSelectedLayerType] = useState<'main' | 'sticker' | null>(null);
 
   const getRectMask = useCallback(() => {
     const c = canvasRef.current;
@@ -91,6 +93,9 @@ export function useDesigner() {
 
     canvas.on('mouse:down', (e) => {
       checkAndSetInteracting(e.target, true);
+      if (e.target) {
+        updateSelection(e.target);
+      }
     });
 
     canvas.on('object:moving', (e) => {
@@ -119,8 +124,31 @@ export function useDesigner() {
       setIsInteracting(false);
     });
 
+    const updateSelection = (target?: any) => {
+      const active = target || canvas.getActiveObject();
+      if (
+        active &&
+        (active instanceof fabric.FabricImage ||
+          (active as any).layerType === 'sticker' ||
+          (active as any).layerType === 'main')
+      ) {
+        setSelectedLayerType(((active as any).layerType as 'main' | 'sticker') || 'main');
+      } else {
+        setSelectedLayerType(null);
+      }
+    };
+
+    canvas.on('selection:created', (e) => {
+      updateSelection(e.selected?.[0]);
+    });
+
+    canvas.on('selection:updated', (e) => {
+      updateSelection(e.selected?.[0]);
+    });
+
     canvas.on('selection:cleared', () => {
       setIsInteracting(false);
+      setSelectedLayerType(null);
     });
 
     // Enforce size limits for stickers
@@ -201,6 +229,7 @@ export function useDesigner() {
           }
 
           canvasRef.current!.setActiveObject(img);
+          setSelectedLayerType(type);
           canvasRef.current!.renderAll();
           resolve();
         })
@@ -215,6 +244,7 @@ export function useDesigner() {
   const clearCanvas = useCallback(() => {
     if (!canvasRef.current) return;
     canvasRef.current.clear();
+    setSelectedLayerType(null);
     canvasRef.current.renderAll();
   }, []);
 
@@ -223,6 +253,7 @@ export function useDesigner() {
     const activeObjects = canvasRef.current.getActiveObjects();
     canvasRef.current.remove(...activeObjects);
     canvasRef.current.discardActiveObject();
+    setSelectedLayerType(null);
     canvasRef.current.renderAll();
   }, []);
 
@@ -317,6 +348,39 @@ export function useDesigner() {
     }
   }, []);
 
+  const removeSelectedBackground = useCallback(async (onProgress?: (msg: string) => void): Promise<boolean> => {
+    const canvas = canvasRef.current;
+    if (!canvas) return false;
+
+    const active = canvas.getActiveObject() as fabric.FabricImage | null;
+    if (!active) return false;
+
+    const element = (active as any).getElement ? (active as any).getElement() : (active as any)._element;
+    if (!element) return false;
+
+    const transparentDataUrl = await removeBackgroundWithRMBG(element, onProgress);
+
+    const state = {
+      left: active.left,
+      top: active.top,
+      scaleX: active.scaleX,
+      scaleY: active.scaleY,
+      angle: active.angle,
+      flipX: active.flipX,
+      flipY: active.flipY,
+      originX: active.originX,
+      originY: active.originY,
+      clipPath: active.clipPath,
+      layerType: (active as any).layerType,
+    };
+
+    await active.setSrc(transparentDataUrl);
+    active.set(state as any);
+    active.setCoords();
+    canvas.renderAll();
+    return true;
+  }, []);
+
   const designer = useMemo(() => ({
     initCanvas,
     containerRef,
@@ -333,6 +397,8 @@ export function useDesigner() {
     exportState,
     importState,
     isInteracting,
+    selectedLayerType,
+    removeSelectedBackground,
     canvas: canvasRef.current
   }), [
     initCanvas,
@@ -348,7 +414,9 @@ export function useDesigner() {
     getNormalizedDesignData,
     exportState,
     importState,
-    isInteracting
+    isInteracting,
+    selectedLayerType,
+    removeSelectedBackground
   ]);
 
   return designer;

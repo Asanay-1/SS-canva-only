@@ -9,18 +9,35 @@ import type { useDesigner } from "../hooks/useDesigner";
 interface StickerPickerProps {
   designer: ReturnType<typeof useDesigner>;
   onClose: () => void;
+  triggerRef?: React.RefObject<HTMLElement | null>;
 }
 
 // In-memory session cache: persists across panel open/close until page refresh
 let sessionUploadedStickers: string[] = [];
 let cachedPresets: string[] | null = null;
 
-export function StickerPicker({ designer, onClose }: StickerPickerProps) {
+export function StickerPicker({ designer, onClose, triggerRef }: StickerPickerProps) {
   const fileRef = useRef<HTMLInputElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState<string | null>(null);
   const [uploadedStickers, setUploadedStickers] = useState<string[]>(sessionUploadedStickers);
   const [presetStickers, setPresetStickers] = useState<string[]>(cachedPresets || []);
   const [fetchingPresets, setFetchingPresets] = useState(!cachedPresets);
+
+  useEffect(() => {
+    const handlePointerDown = (e: PointerEvent) => {
+      const target = e.target as Node;
+      if (triggerRef?.current && triggerRef.current.contains(target)) {
+        return;
+      }
+      if (panelRef.current && !panelRef.current.contains(target)) {
+        onClose();
+      }
+    };
+
+    window.addEventListener("pointerdown", handlePointerDown);
+    return () => window.removeEventListener("pointerdown", handlePointerDown);
+  }, [onClose, triggerRef]);
 
   useEffect(() => {
     if (cachedPresets) return;
@@ -59,6 +76,7 @@ export function StickerPicker({ designer, onClose }: StickerPickerProps) {
 
   return (
     <motion.div
+      ref={panelRef}
       initial={{ opacity: 0, y: -6, scale: 0.98 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: -6, scale: 0.98 }}

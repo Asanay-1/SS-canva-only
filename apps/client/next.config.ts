@@ -15,6 +15,14 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  webpack: (config) => {
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      sharp$: false,
+      "onnxruntime-node$": false,
+    };
+    return config;
+  },
   async redirects() {
     return [
       {
@@ -24,7 +32,7 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-  // เพิ่ม Headers เพื่อช่วยเรื่อง Caching
+
   async headers() {
     return [
       {

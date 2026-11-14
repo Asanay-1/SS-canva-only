@@ -2,16 +2,16 @@
 
 export const runtime = 'edge';
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Loader2, Upload, Plus, X, Sticker } from "lucide-react";
+import { Loader2, Upload, Plus, X, Sticker, Download, Wand2 } from "lucide-react";
 
 import { CanvasEditor } from "@/features/designer/components/CanvasEditor";
 import { useDesigner } from "@/features/designer/hooks/useDesigner";
 import { StickerPicker } from "@/features/designer/components/StickerPicker";
 
 export default function DesignerPage() {
-  const [designer, setDesigner] = useState<ReturnType<typeof useDesigner> | null>(null);
+  const designer = useDesigner();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasArtwork, setHasArtwork] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -21,9 +21,20 @@ export default function DesignerPage() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [mockupAssetsLoaded, setMockupAssetsLoaded] = useState({ bottom: false, top: false });
   const isMockupReady = mockupAssetsLoaded.bottom && mockupAssetsLoaded.top;
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [isRemovingBg, setIsRemovingBg] = useState(false);
+  const [bgProgressText, setBgProgressText] = useState("");
+  const stickerButtonRef = useRef<HTMLButtonElement>(null);
 
-  const onDesignerInit = useCallback((d: ReturnType<typeof useDesigner>) => {
-    setDesigner(d);
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setShowStickerPicker(false);
+        setShowMockup(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -75,6 +86,96 @@ export default function DesignerPage() {
     }
   };
 
+  const handleDownloadMockup = async () => {
+    if (!previewUrl) return;
+    setIsDownloading(true);
+    try {
+      const loadImage = (src: string): Promise<HTMLImageElement> =>
+        new Promise((resolve, reject) => {
+          const img = new Image();
+          img.crossOrigin = "anonymous";
+          img.onload = () => resolve(img);
+          img.onerror = reject;
+          img.src = src;
+        });
+
+      const [imgBase, imgDesign, imgOverlay] = await Promise.all([
+        loadImage("/assets/mockups/white-tshirt-hanger.png"),
+        loadImage(previewUrl),
+        loadImage("/assets/mockups/overlay.png"),
+      ]);
+
+      const size = 1280;
+      const canvas = document.createElement("canvas");
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) throw new Error("Canvas context unavailable");
+
+      // Background fill
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, size, size);
+
+      // Layer 1: Base T-shirt
+      ctx.save();
+      ctx.drawImage(imgBase, 0, 0, size, size);
+      ctx.restore();
+
+      // Layer 2: Design
+      const ox = size * 0.5;
+      const oy = size * 0.64;
+      ctx.save();
+      ctx.globalCompositeOperation = "multiply";
+      ctx.translate(ox, oy);
+      ctx.translate(0.005 * size, -0.075 * size);
+      ctx.scale(0.79, 0.79);
+      ctx.translate(-ox, -oy);
+      ctx.drawImage(imgDesign, 0, 0, size, size);
+      ctx.restore();
+
+      // Layer 3: Texture & Shadow Overlay
+      ctx.save();
+      ctx.globalCompositeOperation = "multiply";
+      ctx.globalAlpha = 0.2;
+      if ("filter" in ctx) {
+        ctx.filter = "brightness(1.1)";
+      }
+      ctx.drawImage(imgOverlay, 0, 0, size, size);
+      ctx.restore();
+
+      const a = document.createElement("a");
+      a.href = canvas.toDataURL("image/png");
+      a.download = `tshirt-mockup-${Date.now()}.png`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } catch (err) {
+      console.error("Failed to generate mockup download:", err);
+      alert("ດາວໂຫລດບໍ່ສຳເລັດ ກະລຸນາລອງໃໝ່");
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
+  const handleRemoveBackground = async () => {
+    if (!designer) return;
+    setIsRemovingBg(true);
+    setBgProgressText("ກຳລັງປະມວນຜົນ...");
+    // Yield to React so the loading state renders before inference starts
+    await new Promise<void>((resolve) => setTimeout(resolve, 0));
+    try {
+      await designer.removeSelectedBackground((status) => {
+        setBgProgressText(status);
+      });
+    } catch (err) {
+      console.error("Failed to remove background:", err);
+      alert("ລຶບພື້ນຫຼັງບໍ່ສຳເລັດ");
+    } finally {
+      setIsRemovingBg(false);
+      setBgProgressText("");
+    }
+  };
+
   return (
     <main className="flex-1 px-4 md:px-6 py-5 pb-24 md:pb-8 flex flex-col items-center">
       <div className="w-full max-w-2xl flex flex-col gap-4">
@@ -96,7 +197,7 @@ export default function DesignerPage() {
         </div>
 
         {/* Main Designer Area */}
-        <div className="w-full aspect-square bg-white rounded-[32px] p-2 md:p-6 border-2 border-gray-200 flex flex-col relative min-w-0">
+        <div className="w-full aspect-square bg-white rounded-xl p-2 md:p-6 border-2 border-gray-200 flex flex-col relative min-w-0">
             {/* Floating Action Buttons - Top Right: Add Image */}
             <div className="absolute top-4 right-4 md:top-6 md:right-6 z-50">
               <label className="cursor-pointer w-9 h-9 bg-gray-100/80 backdrop-blur-sm active:bg-gray-200 active:scale-95 rounded-xl flex items-center justify-center text-gray-900 transition-all shadow-sm" title="ເພີ່ມຮູບພາບ">
@@ -113,6 +214,7 @@ export default function DesignerPage() {
             {/* Floating Action Buttons - Top Left: Stickers */}
             <div className="absolute top-4 left-4 md:top-6 md:left-6 z-50">
               <button
+                ref={stickerButtonRef}
                 onClick={() => setShowStickerPicker((prev) => !prev)}
                 className="cursor-pointer w-9 h-9 bg-gray-100/80 backdrop-blur-sm active:bg-gray-200 active:scale-95 rounded-xl flex items-center justify-center text-gray-900 transition-all shadow-sm"
                 title="ສະຕິກເກີ້"
@@ -126,6 +228,7 @@ export default function DesignerPage() {
                   <StickerPicker
                     designer={designer}
                     onClose={() => setShowStickerPicker(false)}
+                    triggerRef={stickerButtonRef}
                   />
                 )}
               </AnimatePresence>
@@ -149,7 +252,7 @@ export default function DesignerPage() {
 
             <div className="flex-1 relative overflow-hidden flex flex-col">
               <CanvasEditor
-                onInit={onDesignerInit}
+                designer={designer}
                 onPublish={onPublish}
                 isSubmitting={isSubmitting}
                 hasArtwork={hasArtwork}
@@ -157,77 +260,147 @@ export default function DesignerPage() {
             </div>
           </div>
 
-        {/* Mockup Modal */}
-        {showMockup && previewUrl && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+        {/* Actions outside/below canvas */}
+        <AnimatePresence>
+          {designer?.selectedLayerType && (
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="w-full max-w-xl bg-white rounded-3xl overflow-hidden shadow-2xl flex flex-col"
+              initial={{ opacity: 0, y: -4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.15, ease: "easeOut" }}
+              className="flex items-center justify-start"
             >
-              {/* Header */}
-              <div className="flex items-center justify-between p-5 border-b border-gray-100">
-                <button
-                  onClick={() => {
-                    setShowMockup(false);
-                    setMockupAssetsLoaded({ bottom: false, top: false });
-                  }}
-                  className="p-2 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
-                  title="ປິດ"
-                >
-                  <X size={20} />
-                </button>
-              </div>
-
-              {/* Mockup Content */}
-              <div className="relative w-full aspect-square bg-gray-50 flex items-center justify-center overflow-hidden">
-                {/* Overlay Loader */}
-                {!isMockupReady && (
-                  <div className="absolute inset-0 z-50 flex flex-col items-center justify-center gap-2 bg-white/90 backdrop-blur-sm">
-                    <Loader2 className="w-8 h-8 animate-spin text-gray-300" />
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">ກຳລັງໂຫລດ...</p>
-                  </div>
+              <button
+                type="button"
+                onClick={handleRemoveBackground}
+                disabled={isRemovingBg}
+                className="flex items-center gap-2 bg-[#2a2a2a] hover:bg-[#383838] text-white px-3.5 py-2 rounded-md shadow-sm transition-all active:scale-95 disabled:opacity-50 text-xs font-medium cursor-pointer"
+                title="ລຶບພື້ນຫຼັງ"
+              >
+                {isRemovingBg ? (
+                  <>
+                    <span
+                      className="inline-flex items-center justify-center animate-spin"
+                      style={{ willChange: "transform" }}
+                    >
+                      <Loader2 size={16} className="text-gray-300" />
+                    </span>
+                    <span>{bgProgressText || "ກຳລັງປະມວນຜົນ..."}</span>
+                  </>
+                ) : (
+                  <>
+                    <Wand2 size={16} className="text-gray-200" />
+                    <span>ລຶບພື້ນຫຼັງ</span>
+                  </>
                 )}
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-                {/* Layer 1: Base Hanger Shirt (Bottom) */}
-                <img
-                  src="/assets/mockups/white-tshirt-hanger.png"
-                  alt="ເສື້ອຍືດ"
-                  onLoad={() => setMockupAssetsLoaded(prev => ({ ...prev, bottom: true }))}
-                  className={`absolute inset-0 w-full h-full object-contain select-none pointer-events-none transition-opacity duration-300 ${mockupAssetsLoaded.bottom ? 'opacity-100' : 'opacity-0'}`}
-                  style={{ transform: 'scale(0.7715)' }}
-                />
+        {/* Mockup Modal */}
+        <AnimatePresence>
+          {showMockup && previewUrl && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.18, ease: "easeOut" }}
+              onClick={() => {
+                setShowMockup(false);
+                setMockupAssetsLoaded({ bottom: false, top: false });
+              }}
+              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm cursor-pointer"
+            >
+              <motion.div
+                onClick={(e) => e.stopPropagation()}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.18, ease: "easeOut" }}
+                className="w-full max-w-xl bg-white rounded-3xl overflow-hidden shadow-2xl flex flex-col cursor-default"
+              >
+                {/* Header */}
+                <div className="flex items-center justify-between p-4 px-5 border-b border-gray-100">
+                  <div className="flex items-center gap-2">
+    
+                    <button
+                      onClick={() => {
+                        setShowMockup(false);
+                        setMockupAssetsLoaded({ bottom: false, top: false });
+                      }}
+                      className="p-1.5 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors text-gray-600"
+                      title="ປິດ"
+                    >
+                      <X size={18} />
+                    </button>
+                  </div>
+                </div>
 
-                {/* Layer 2: Your Design Overlay (Middle) */}
-                {isMockupReady && (
-                  <motion.img
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    src={previewUrl}
-                    alt="ລາຍອອກແບບ"
-                    className="absolute inset-0 w-full h-full object-contain select-none pointer-events-none mix-blend-multiply"
+                {/* Mockup Content */}
+                <div className="relative w-full aspect-square bg-gray-50 flex items-center justify-center overflow-hidden">
+                  {/* Overlay Loader */}
+                  {!isMockupReady && (
+                    <div className="absolute inset-0 z-50 flex flex-col items-center justify-center gap-2 bg-white/90 backdrop-blur-sm">
+                      <Loader2 className="w-8 h-8 animate-spin text-gray-300" />
+                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">ກຳລັງໂຫລດ...</p>
+                    </div>
+                  )}
+
+                  {/* Layer 1: Base Hanger Shirt (Bottom) */}
+                  <img
+                    src="/assets/mockups/white-tshirt-hanger.png"
+                    alt="ເສື້ອຍືດ"
+                    onLoad={() => setMockupAssetsLoaded(prev => ({ ...prev, bottom: true }))}
+                    className={`absolute inset-0 w-full h-full object-contain select-none pointer-events-none transition-opacity duration-300 ${mockupAssetsLoaded.bottom ? 'opacity-100' : 'opacity-0'}`}
+                  />
+
+                  {/* Layer 2: Your Design Overlay (Middle) */}
+                  {isMockupReady && (
+                    <motion.img
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      src={previewUrl}
+                      alt="ລາຍອອກແບບ"
+                      className="absolute inset-0 w-full h-full object-contain select-none pointer-events-none mix-blend-multiply"
+                      style={{
+                        transformOrigin: "50% 64%",
+                        transform: 'translate(0.5%, -7.5%) scale(0.79)'
+                      }}
+                    />
+                  )}
+
+                  {/* Layer 3: Texture & Shadow Overlay (Top)*/}
+                  <img
+                    src="/assets/mockups/overlay.png"
+                    alt="ແສງແລະເງົາ"
+                    onLoad={() => setMockupAssetsLoaded(prev => ({ ...prev, top: true }))}
+                    className={`absolute inset-0 w-full h-full object-contain select-none pointer-events-none opacity-20 mix-blend-multiply transition-opacity duration-300 ${mockupAssetsLoaded.top ? 'opacity-20' : 'opacity-0'}`}
                     style={{
-                      transformOrigin: "50% 64%",
-                      transform: 'scale(0.7715) translate(0.5%, -7.5%) scale(0.79)'
+                      filter: 'brightness(1.1)'
                     }}
                   />
-                )}
+                </div>
 
-                {/* Layer 3: Texture & Shadow Overlay (Top)*/}
-                <img
-                  src="/assets/mockups/overlay.png"
-                  alt="ແສງແລະເງົາ"
-                  onLoad={() => setMockupAssetsLoaded(prev => ({ ...prev, top: true }))}
-                  className={`absolute inset-0 w-full h-full object-contain select-none pointer-events-none opacity-20 mix-blend-multiply transition-opacity duration-300 ${mockupAssetsLoaded.top ? 'opacity-20' : 'opacity-0'}`}
-                  style={{
-                    transform: 'scale(0.7715)',
-                    filter: 'brightness(1.1)'
-                  }}
-                />
-              </div>
+                {/* Footer */}
+                <div className="p-4 px-5 border-t border-gray-100 bg-white flex items-center justify-end">
+                  <button
+                    onClick={handleDownloadMockup}
+                    disabled={!isMockupReady || isDownloading}
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-gray-900 text-white text-sm font-bold rounded-md hover:bg-gray-800 transition-all active:scale-95 disabled:opacity-40 shadow-sm"
+                  >
+                    {isDownloading ? (
+                      <Loader2 size={16} className="animate-spin" />
+                    ) : (
+                      <Download size={16} />
+                    )}
+                    <span>Download</span>
+                  </button>
+                </div>
+              </motion.div>
             </motion.div>
-          </div>
-        )}
+          )}
+        </AnimatePresence>
       </div>
     </main>
   );
