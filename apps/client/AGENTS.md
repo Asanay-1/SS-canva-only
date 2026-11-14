@@ -1,6 +1,6 @@
-# SS revive
+# revive my old project
 ## discussion
-we will strip everytihng out leaving only the canvas with minor ux/ui improvement, built into static and deploy in cloudflare page 
+strip everytihng out leaving only the canvas with minor ux/ui improvement, built into static and deploy on cloudflare page 
 
 ## Main web language
 - Lao

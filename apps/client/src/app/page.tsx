@@ -76,10 +76,10 @@ export default function DesignerPage() {
   };
 
   return (
-    <main className="flex-1 px-4 md:px-6 py-5 pb-24 md:pb-8">
-      <div className="w-full mx-auto min-h-screen pb-20 flex flex-col gap-6 p-0 md:p-6 lg:p-0 overflow-x-hidden">
+    <main className="flex-1 px-4 md:px-6 py-5 pb-24 md:pb-8 flex flex-col items-center">
+      <div className="w-full max-w-2xl flex flex-col gap-4">
         {/* Top Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-end">
           <motion.button
             onClick={onPublish}
             disabled={isSubmitting}
@@ -96,9 +96,7 @@ export default function DesignerPage() {
         </div>
 
         {/* Main Designer Area */}
-        <div className="flex-1 flex flex-col lg:flex-row gap-6">
-          {/* Left: Editor (Now taking full width) */}
-          <div className="w-full bg-white rounded-[32px] p-1 md:p-6 border-2 border-gray-200 flex flex-col relative min-w-0 min-h-[400px] lg:min-h-[750px] lg:max-h-[720px]">
+        <div className="w-full aspect-square bg-white rounded-[32px] p-2 md:p-6 border-2 border-gray-200 flex flex-col relative min-w-0">
             {/* Floating Action Buttons - Top Right: Add Image */}
             <div className="absolute top-4 right-4 md:top-6 md:right-6 z-50">
               <label className="cursor-pointer w-9 h-9 bg-gray-100/80 backdrop-blur-sm active:bg-gray-200 active:scale-95 rounded-xl flex items-center justify-center text-gray-900 transition-all shadow-sm" title="ເພີ່ມຮູບພາບ">
@@ -156,7 +154,6 @@ export default function DesignerPage() {
               />
             </div>
           </div>
-        </div>
 
         {/* Mockup Modal */}
         {showMockup && previewUrl && (
