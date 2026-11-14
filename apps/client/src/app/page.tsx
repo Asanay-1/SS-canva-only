@@ -3,7 +3,7 @@
 export const runtime = 'edge';
 
 import { useState, useCallback } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Loader2, Upload, Plus, X, Sticker } from "lucide-react";
 
 import { CanvasEditor } from "@/features/designer/components/CanvasEditor";
@@ -121,12 +121,14 @@ export default function DesignerPage() {
               </button>
 
               {/* Sticker Picker Panel */}
-              {showStickerPicker && designer && (
-                <StickerPicker
-                  designer={designer}
-                  onClose={() => setShowStickerPicker(false)}
-                />
-              )}
+              <AnimatePresence>
+                {showStickerPicker && designer && (
+                  <StickerPicker
+                    designer={designer}
+                    onClose={() => setShowStickerPicker(false)}
+                  />
+                )}
+              </AnimatePresence>
             </div>
 
             {/* Progress Bar */}
