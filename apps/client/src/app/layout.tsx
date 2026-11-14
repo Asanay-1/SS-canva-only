@@ -20,8 +20,6 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-export const runtime = 'edge';
-
 export default function RootLayout({
   children,
 }: {

@@ -1,7 +1,17 @@
 import type { NextConfig } from "next";
 
+const isGithubActions = process.env.GITHUB_ACTIONS === "true";
+const defaultRepoName = "SS-canva-only";
+const basePath =
+  process.env.NEXT_PUBLIC_BASE_PATH ?? (isGithubActions ? `/${defaultRepoName}` : "");
+
 /** @type {import('next').NextConfig} */
 const nextConfig: NextConfig = {
+  output: "export",
+  basePath: basePath || undefined,
+  env: {
+    NEXT_PUBLIC_BASE_PATH: basePath,
+  },
   images: {
     unoptimized: true, 
     remotePatterns: [
@@ -22,29 +32,6 @@ const nextConfig: NextConfig = {
       "onnxruntime-node$": false,
     };
     return config;
-  },
-  async redirects() {
-    return [
-      {
-        source: '/designs/upload',
-        destination: '/',
-        permanent: true,
-      },
-    ];
-  },
-
-  async headers() {
-    return [
-      {
-        source: '/assets/:path*',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
-        ],
-      },
-    ];
   },
 };
 

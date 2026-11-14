@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { useDesigner } from "../hooks/useDesigner";
+import { assetUrl } from "@/lib/utils";
 
 interface CanvasEditorProps {
   designer: ReturnType<typeof useDesigner>;
@@ -183,7 +184,7 @@ export function CanvasEditor({ designer, onInit, onPublish, isSubmitting, hasArt
         <div className="relative w-full h-full aspect-square bg-transparent mx-auto no-drag">
           {/* Layer 0: Base Image (Bottom) */}
           <img
-            src="/assets/mockups/canvas.png"
+            src={assetUrl("/assets/mockups/canvas.png")}
             alt="T-shirt Base"
             className="absolute inset-0 w-full h-full object-contain pointer-events-none z-0 select-none no-drag"
             style={{ transform: 'scale(1.265)' }}

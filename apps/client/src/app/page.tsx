@@ -1,7 +1,5 @@
 "use client";
 
-export const runtime = 'edge';
-
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Loader2, Upload, Plus, X, Sticker, Download, Wand2 } from "lucide-react";
@@ -10,6 +8,7 @@ import { CanvasEditor } from "@/features/designer/components/CanvasEditor";
 import { useDesigner } from "@/features/designer/hooks/useDesigner";
 import { StickerPicker } from "@/features/designer/components/StickerPicker";
 import { ActionToolbar } from "@/features/designer/components/ActionToolbar";
+import { assetUrl } from "@/lib/utils";
 
 export default function DesignerPage() {
   const designer = useDesigner();
@@ -101,9 +100,9 @@ export default function DesignerPage() {
         });
 
       const [imgBase, imgDesign, imgOverlay] = await Promise.all([
-        loadImage("/assets/mockups/white-tshirt-hanger.png"),
+        loadImage(assetUrl("/assets/mockups/white-tshirt-hanger.png")),
         loadImage(previewUrl),
-        loadImage("/assets/mockups/overlay.png"),
+        loadImage(assetUrl("/assets/mockups/overlay.png")),
       ]);
 
       const size = 1280;
@@ -366,7 +365,7 @@ export default function DesignerPage() {
 
                   {/* Layer 1: Base Hanger Shirt (Bottom) */}
                   <img
-                    src="/assets/mockups/white-tshirt-hanger.png"
+                    src={assetUrl("/assets/mockups/white-tshirt-hanger.png")}
                     alt="ເສື້ອຍືດ"
                     onLoad={() => setMockupAssetsLoaded(prev => ({ ...prev, bottom: true }))}
                     className={`absolute inset-0 w-full h-full object-contain select-none pointer-events-none transition-opacity duration-300 ${mockupAssetsLoaded.bottom ? 'opacity-100' : 'opacity-0'}`}
@@ -389,7 +388,7 @@ export default function DesignerPage() {
 
                   {/* Layer 3: Texture & Shadow Overlay (Top)*/}
                   <img
-                    src="/assets/mockups/overlay.png"
+                    src={assetUrl("/assets/mockups/overlay.png")}
                     alt="ແສງແລະເງົາ"
                     onLoad={() => setMockupAssetsLoaded(prev => ({ ...prev, top: true }))}
                     className={`absolute inset-0 w-full h-full object-contain select-none pointer-events-none opacity-20 mix-blend-multiply transition-opacity duration-300 ${mockupAssetsLoaded.top ? 'opacity-20' : 'opacity-0'}`}

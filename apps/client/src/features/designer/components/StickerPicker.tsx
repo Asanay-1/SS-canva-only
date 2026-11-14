@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { motion } from "framer-motion";
 import { X, Upload, Sticker, Loader2 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, assetUrl } from "@/lib/utils";
 import type { useDesigner } from "../hooks/useDesigner";
 
 interface StickerPickerProps {
@@ -43,11 +43,12 @@ export function StickerPicker({ designer, onClose, triggerRef }: StickerPickerPr
   useEffect(() => {
     if (cachedPresets) return;
 
-    fetch("/assets/stickers.json")
+    fetch(assetUrl("/assets/stickers.json"))
       .then((res) => res.json())
       .then((data: { stickers: string[] }) => {
-        cachedPresets = data.stickers;
-        setPresetStickers(data.stickers);
+        const resolvedStickers = (data.stickers || []).map((s) => assetUrl(s));
+        cachedPresets = resolvedStickers;
+        setPresetStickers(resolvedStickers);
       })
       .catch(() => setPresetStickers([]))
       .finally(() => setFetchingPresets(false));
