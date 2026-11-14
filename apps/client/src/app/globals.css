@@ -16,7 +16,7 @@
   }
 
   body {
-    @apply bg-white text-gray-900 overflow-x-hidden;
+    @apply bg-gray-100 text-gray-900 overflow-x-hidden;
     font-family: 'Phetsarath OT', 'Noto Sans Lao', var(--font-inter), sans-serif;
     line-height: 1.6;
     overscroll-behavior: none;

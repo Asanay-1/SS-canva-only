@@ -198,7 +198,7 @@ export default function DesignerPage() {
         </div>
 
         {/* Main Designer Area */}
-        <div className="w-full aspect-square bg-gray-100 rounded-xl border-2 border-gray-200 relative min-w-0 overflow-hidden">
+        <div className="w-full aspect-square bg-white rounded-xl border-2 border-gray-200 relative min-w-0 overflow-hidden">
             {/* Floating Action Buttons - Top Right: Add Image */}
             <div className="absolute top-4 right-4 md:top-6 md:right-6 z-50">
               <label className="cursor-pointer w-9 h-9 bg-gray-100/80 backdrop-blur-sm active:bg-gray-200 active:scale-95 rounded-xl flex items-center justify-center text-gray-900 transition-all shadow-sm" title="ເພີ່ມຮູບພາບ">
@@ -326,30 +326,25 @@ export default function DesignerPage() {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.18, ease: "easeOut" }}
-                className="w-full max-w-xl bg-white rounded-3xl overflow-hidden shadow-2xl flex flex-col cursor-default"
+                className="w-full max-w-xl flex flex-col items-center gap-3 md:gap-4 cursor-default select-none"
               >
-                {/* Header */}
-                <div className="flex items-center justify-between p-4 px-5 border-b border-gray-100">
-                  <div className="flex items-center gap-2">
-    
-                    <button
-                      onClick={() => {
-                        setShowMockup(false);
-                        setMockupAssetsLoaded({ bottom: false, top: false });
-                      }}
-                      className="p-1.5 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors text-gray-600"
-                      title="ປິດ"
-                    >
-                      <X size={18} />
-                    </button>
-                  </div>
-                </div>
+                {/* Mockup Card */}
+                <div className="relative w-full aspect-square bg-white rounded-xl overflow-hidden shadow-2xl flex items-center justify-center">
+                  {/* Close Button - Top Left Inside Image, No Background */}
+                  <button
+                    onClick={() => {
+                      setShowMockup(false);
+                      setMockupAssetsLoaded({ bottom: false, top: false });
+                    }}
+                    className="absolute top-4 left-4 md:top-5 md:left-5 z-50 p-2 text-gray-500 hover:text-gray-900 transition-colors active:scale-95 cursor-pointer"
+                    title="ປິດ"
+                  >
+                    <X size={22} />
+                  </button>
 
-                {/* Mockup Content */}
-                <div className="relative w-full aspect-square bg-gray-50 flex items-center justify-center overflow-hidden">
                   {/* Overlay Loader */}
                   {!isMockupReady && (
-                    <div className="absolute inset-0 z-50 flex flex-col items-center justify-center gap-2 bg-white/90 backdrop-blur-sm">
+                    <div className="absolute inset-0 z-40 flex flex-col items-center justify-center gap-2 bg-white/90 backdrop-blur-sm">
                       <Loader2 className="w-8 h-8 animate-spin text-gray-300" />
                       <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">ກຳລັງໂຫລດ...</p>
                     </div>
@@ -390,21 +385,19 @@ export default function DesignerPage() {
                   />
                 </div>
 
-                {/* Footer */}
-                <div className="p-4 px-5 border-t border-gray-100 bg-white flex items-center justify-end">
-                  <button
-                    onClick={handleDownloadMockup}
-                    disabled={!isMockupReady || isDownloading}
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-gray-900 text-white text-sm font-bold rounded-md hover:bg-gray-800 transition-all active:scale-95 disabled:opacity-40 shadow-sm"
-                  >
-                    {isDownloading ? (
-                      <Loader2 size={16} className="animate-spin" />
-                    ) : (
-                      <Download size={16} />
-                    )}
-                    <span>Download</span>
-                  </button>
-                </div>
+                {/* Download Button */}
+                <button
+                  onClick={handleDownloadMockup}
+                  disabled={!isMockupReady || isDownloading}
+                  className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-gray-900 text-white hover:bg-gray-800 text-sm font-semibold rounded-md backdrop-blur-sm transition-all active:scale-95 disabled:opacity-40 shadow-lg cursor-pointer"
+                >
+                  {isDownloading ? (
+                    <Loader2 size={16} className="animate-spin" />
+                  ) : (
+                    <Download size={16} />
+                  )}
+                  <span>Download</span>
+                </button>
               </motion.div>
             </motion.div>
           )}
