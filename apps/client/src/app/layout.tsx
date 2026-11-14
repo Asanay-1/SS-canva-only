@@ -10,8 +10,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "SS - Social POD Platform",
-  description: "Social Print-on-Demand Platform in Laos",
+  title: "ແຕ່ງເສື້ອ",
+  description: "",
 };
 
 export const viewport: Viewport = {

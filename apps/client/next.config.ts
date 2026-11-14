@@ -15,6 +15,15 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  async redirects() {
+    return [
+      {
+        source: '/designs/upload',
+        destination: '/',
+        permanent: true,
+      },
+    ];
+  },
   // เพิ่ม Headers เพื่อช่วยเรื่อง Caching
   async headers() {
     return [

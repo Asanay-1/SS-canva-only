@@ -6,4 +6,4 @@ we will strip everytihng out leaving only the canvas with minor ux/ui improvemen
 - Lao
 ## Rules
 - do not build unless i ask to
-- use caveman skill
+- Load caveman skill if haven't
