@@ -10,6 +10,14 @@ import { StickerPicker } from "@/features/designer/components/StickerPicker";
 import { ActionToolbar } from "@/features/designer/components/ActionToolbar";
 import { assetUrl } from "@/lib/utils";
 
+const MOCKUP_CALIBRATION = {
+  originX: 50,
+  originY: 64,
+  shiftX: 0,
+  shiftY: -4.0,
+  scale: 0.79,
+};
+
 export default function DesignerPage() {
   const designer = useDesigner();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -122,13 +130,16 @@ export default function DesignerPage() {
       ctx.restore();
 
       // Layer 2: Design
-      const ox = size * 0.5;
-      const oy = size * 0.64;
+      const ox = size * (MOCKUP_CALIBRATION.originX / 100);
+      const oy = size * (MOCKUP_CALIBRATION.originY / 100);
       ctx.save();
       ctx.globalCompositeOperation = "multiply";
       ctx.translate(ox, oy);
-      ctx.translate(0.005 * size, -0.075 * size);
-      ctx.scale(0.79, 0.79);
+      ctx.translate(
+        (MOCKUP_CALIBRATION.shiftX / 100) * size,
+        (MOCKUP_CALIBRATION.shiftY / 100) * size
+      );
+      ctx.scale(MOCKUP_CALIBRATION.scale, MOCKUP_CALIBRATION.scale);
       ctx.translate(-ox, -oy);
       ctx.drawImage(imgDesign, 0, 0, size, size);
       ctx.restore();
@@ -343,7 +354,7 @@ export default function DesignerPage() {
               >
                 {/* Mockup Card */}
                 <div className="relative w-full aspect-square bg-white rounded-3xl overflow-hidden shadow-2xl flex items-center justify-center">
-                  {/* Close Button - Top Left Inside Image, No Background */}
+                  {/* Close Button - Top Left Inside Image*/}
                   <button
                     onClick={() => {
                       setShowMockup(false);
@@ -373,17 +384,21 @@ export default function DesignerPage() {
 
                   {/* Layer 2: Your Design Overlay (Middle) */}
                   {isMockupReady && (
-                    <motion.img
+                    <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      src={previewUrl}
-                      alt="ລາຍອອກແບບ"
-                      className="absolute inset-0 w-full h-full object-contain select-none pointer-events-none mix-blend-multiply"
-                      style={{
-                        transformOrigin: "50% 64%",
-                        transform: 'translate(0.5%, -7.5%) scale(0.79)'
-                      }}
-                    />
+                      className="absolute inset-0 w-full h-full pointer-events-none"
+                    >
+                      <img
+                        src={previewUrl}
+                        alt="ລາຍອອກແບບ"
+                        className="w-full h-full object-contain mix-blend-multiply"
+                        style={{
+                          transformOrigin: `${MOCKUP_CALIBRATION.originX}% ${MOCKUP_CALIBRATION.originY}%`,
+                          transform: `translate(${MOCKUP_CALIBRATION.shiftX}%, ${MOCKUP_CALIBRATION.shiftY}%) scale(${MOCKUP_CALIBRATION.scale})`,
+                        }}
+                      />
+                    </motion.div>
                   )}
 
                   {/* Layer 3: Texture & Shadow Overlay (Top)*/}
